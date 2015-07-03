@@ -6,13 +6,12 @@
 <body>
 
 <div id="link">
-  You're looking at an Underscore Template<br> 
+  You're looking at a dompatch + Underscore Template<br> 
   (a.k.a Backbone) version of <a href="https://dbmonster.firebaseapp.com/">DBMonster</a>.<br>
-  <a class="center" href="https://github.com/jashkenas/dbmonster/blob/gh-pages/index.html">View Source Code</a>
+  <a class="center" href="https://github.com/jesseskinner/dbmonster/blob/gh-pages/index.html">View Source Code</a>
 </div>
 
-<div id="body">
-</div>
+<div id="body"><table></table></div>
 
 <script type="text/html" id="template">
   <table class="table table-striped latest-data">
@@ -50,6 +49,7 @@
   </table>
 </script>
 
+<script src="dompatch.min.js"></script>
 <script src="underscore-min.js"></script>
 <script src="junkola-copied-from-ember.js"></script>
 
@@ -59,11 +59,16 @@
 
   var templateString = document.getElementById('template').innerHTML;
   var template = _.template(templateString, {variable: 'data'});
-  var body = document.getElementById('body');
+  var table = document.getElementById('body').firstChild;
+  var parser = new DOMParser();
 
   function redraw() {
     var dbs = getDatabases();
-    body.innerHTML = template({dbs: dbs});
+
+    var html = template({dbs: dbs});
+    var dom = parser.parseFromString(html, 'text/html');
+    dompatch(table, dom.body.firstChild);
+
     setTimeout(redraw, TIMEOUT);
   }
   redraw();
